@@ -2,107 +2,447 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Vault Profit Calculator</title>
+  <title>Vault Profit Engine</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0b0f1a;
-      color: #ffffff;
-      margin: 0;
-      padding: 20px;
+    :root{
+      --bg:#070b14;
+      --card:#0e1630;
+      --card2:#0b1226;
+      --text:#e9eefc;
+      --muted:rgba(233,238,252,.72);
+      --line:rgba(233,238,252,.10);
+      --accent:#7c5cff;
+      --good:#23c483;
+      --bad:#ff5a6a;
+      --warn:#ffcc66;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:16px;
     }
-    .card {
-      max-width: 420px;
-      margin: auto;
-      background: #12182b;
-      padding: 20px;
-      border-radius: 14px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 30% 10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(900px 600px at 80% 20%, rgba(35,196,131,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      padding:18px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
+    .wrap{max-width:980px;margin:0 auto}
+    .top{
+      display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:14px;
     }
-    p {
-      text-align: center;
-      opacity: 0.7;
-      font-size: 14px;
+    .brand{
+      display:flex;gap:12px;align-items:center;
     }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-size: 13px;
-      opacity: 0.85;
+    .logo{
+      width:42px;height:42px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(124,92,255,.25));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+      display:grid;place-items:center;font-weight:800;
+      letter-spacing:.5px;
     }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
+    .title h1{margin:0;font-size:18px}
+    .title p{margin:2px 0 0 0;color:var(--muted);font-size:13px}
+    .pill{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+      color:var(--muted);font-size:12px;
     }
-    .result {
-      margin-top: 16px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      font-size: 15px;
+    .pill span{
+      padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02);
     }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin: 6px 0;
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
     }
-    .profit {
-      font-weight: bold;
-      font-size: 17px;
+    @media (max-width: 860px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
+    .cardHead{
+      padding:14px 14px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background: rgba(255,255,255,.02);
+    }
+    .cardHead strong{font-size:14px}
+    .cardBody{padding:14px}
+    .row2{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    }
+    @media (max-width: 520px){ .row2{grid-template-columns:1fr} }
+
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input, select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(233,238,252,.14);
+      background: var(--card2);
+      color:var(--text);
+      outline:none;
+      font-size:15px;
+    }
+    input:focus, select:focus{border-color: rgba(124,92,255,.65); box-shadow: 0 0 0 3px rgba(124,92,255,.15)}
+    .hint{margin-top:6px;font-size:12px;color:var(--muted)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button.primary{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(124,92,255,.55));
+      border-color: rgba(124,92,255,.65);
+    }
+    button:active{transform: translateY(1px)}
+    .metrics{
+      display:grid;gap:10px;
+    }
+    .metric{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 12px;border:1px solid var(--line);border-radius:14px;
+      background: rgba(255,255,255,.02);
+    }
+    .metric .k{color:var(--muted);font-size:12px}
+    .metric .v{font-weight:800}
+    .big{
+      padding:14px 12px;
+      border:1px solid rgba(124,92,255,.35);
+      background: linear-gradient(180deg, rgba(124,92,255,.18), rgba(255,255,255,.02));
+    }
+    .status{
+      font-size:12px;color:var(--muted);
+      display:flex;align-items:center;gap:8px;justify-content:flex-end;
+    }
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.good{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+    .dot.warn{background:var(--warn)}
+    .mini{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(233,238,252,.18);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .split{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:10px
+    }
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:8px 10px;border-radius:999px;
+      cursor:pointer;font-size:12px;color:var(--muted);
+      user-select:none;
+    }
+    .chip:hover{border-color: rgba(124,92,255,.35)}
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">V</div>
+        <div class="title">
+          <h1>Vault Profit Engine</h1>
+          <p>Plug & play numbers. Use presets for fees. In-person = $0 fees.</p>
+        </div>
+      </div>
+      <div class="pill">
+        <span>Quantity-first</span>
+        <span>Fee presets</span>
+        <span>Breakeven + Margin</span>
+      </div>
+    </div>
 
-<div class="card">
-  <h1>The Vault</h1>
-  <p>Plug & Play Profit Calculator</p>
+    <div class="grid">
+      <!-- INPUTS -->
+      <div class="card">
+        <div class="cardHead">
+          <strong>Inputs</strong>
+          <div class="status" id="status">
+            <span class="dot warn" id="statusDot"></span>
+            <span id="statusText">Enter numbers</span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="row2">
+            <div>
+              <label>Quantity</label>
+              <input id="qty" type="number" min="0" step="1" value="1" />
+              <div class="hint">Tip: set to 1 for single flips, or 36/72/etc for packs.</div>
+            </div>
+            <div>
+              <label>Sell platform</label>
+              <select id="platform">
+                <option value="inperson">In-person (no fees)</option>
+                <option value="ebay">eBay (13.25% + $0.30)</option>
+                <option value="mercari">Mercari (0% fee)*</option>
+                <option value="custom">Custom</option>
+              </select>
+              <div class="hint">*If your Mercari fees differ, use Custom.</div>
+            </div>
+          </div>
 
-  <label>Quantity</label>
-  <input id="qty" type="number" value="1" oninput="calc()" />
+          <div class="row2" style="margin-top:12px">
+            <div>
+              <label>Buy price (each)</label>
+              <input id="buy" type="number" min="0" step="0.01" value="0" />
+            </div>
+            <div>
+              <label>Sell price (each)</label>
+              <input id="sell" type="number" min="0" step="0.01" value="0" />
+            </div>
+          </div>
 
-  <label>Buy Price (per item)</label>
-  <input id="buy" type="number" value="0" oninput="calc()" />
+          <div class="row2" style="margin-top:12px">
+            <div>
+              <label>Shipping + supplies (each)</label>
+              <input id="ship" type="number" min="0" step="0.01" value="0" />
+              <div class="hint">Toploader, bubble mailer, label, etc.</div>
+            </div>
+            <div>
+              <label>Custom fee % (only if Custom)</label>
+              <input id="feePct" type="number" min="0" step="0.01" value="0" />
+              <div class="hint">Example: 13.25 for 13.25%</div>
+            </div>
+          </div>
 
-  <label>Fees / Shipping (per item)</label>
-  <input id="fees" type="number" value="0" oninput="calc()" />
+          <div class="row2" style="margin-top:12px">
+            <div>
+              <label>Custom fee fixed (only if Custom)</label>
+              <input id="feeFixed" type="number" min="0" step="0.01" value="0" />
+              <div class="hint">Example: 0.30 for 30¢</div>
+            </div>
+            <div>
+              <label>Other cost (each)</label>
+              <input id="other" type="number" min="0" step="0.01" value="0" />
+              <div class="hint">Optional: promos, damage risk buffer, etc.</div>
+            </div>
+          </div>
 
-  <label>Sell Price (per item)</label>
-  <input id="sell" type="number" value="0" oninput="calc()" />
+          <div class="split">
+            <div class="chip" onclick="quickSet(1)">Qty 1</div>
+            <div class="chip" onclick="quickSet(10)">Qty 10</div>
+            <div class="chip" onclick="quickSet(36)">Qty 36</div>
+            <div class="chip" onclick="quickSet(72)">Qty 72</div>
+            <div class="chip" onclick="quickInPerson()">In-person</div>
+          </div>
 
-  <div class="result">
-    <div class="row"><span>All-in Cost (each)</span><span id="allin">$0</span></div>
-    <div class="row"><span>Profit (each)</span><span id="each">$0</span></div>
-    <div class="row"><span>Total Profit</span><span id="total" class="profit">$0</span></div>
+          <div class="actions">
+            <button class="primary" onclick="recalc()">Update</button>
+            <button onclick="resetAll()">Reset</button>
+            <button onclick="copySummary()">Copy results</button>
+          </div>
+
+          <div class="mini">
+            <b>How it calculates:</b><br/>
+            Platform fee is applied to the <b>sell price</b>, then we add fixed fee, shipping, and other costs.
+            In-person preset sets fees to <b>$0</b>.
+          </div>
+        </div>
+      </div>
+
+      <!-- OUTPUTS -->
+      <div class="card">
+        <div class="cardHead">
+          <strong>Results</strong>
+        </div>
+        <div class="cardBody">
+          <div class="metrics">
+            <div class="metric big">
+              <div>
+                <div class="k">TOTAL PROFIT</div>
+                <div class="v" id="totalProfit">$0.00</div>
+              </div>
+              <div style="text-align:right">
+                <div class="k">Profit / each</div>
+                <div class="v" id="profitEach">$0.00</div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div>
+                <div class="k">All-in cost / each</div>
+                <div class="v" id="allInEach">$0.00</div>
+              </div>
+              <div style="text-align:right">
+                <div class="k">Breakeven sell / each</div>
+                <div class="v" id="breakevenEach">$0.00</div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div>
+                <div class="k">Total revenue</div>
+                <div class="v" id="totalRev">$0.00</div>
+              </div>
+              <div style="text-align:right">
+                <div class="k">Total cost</div>
+                <div class="v" id="totalCost">$0.00</div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div>
+                <div class="k">Platform fee / each</div>
+                <div class="v" id="feeEach">$0.00</div>
+              </div>
+              <div style="text-align:right">
+                <div class="k">Profit margin</div>
+                <div class="v" id="margin">$0.00%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini" id="noteBox">
+            <b>Note:</b> If your profit is negative, lower buy %, raise sell price, or move in-person to avoid fees.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
-function calc() {
-  const qty = Number(document.getElementById("qty").value) || 0;
-  const buy = Number(document.getElementById("buy").value) || 0;
-  const fees = Number(document.getElementById("fees").value) || 0;
-  const sell = Number(document.getElementById("sell").value) || 0;
+  const $ = (id)=>document.getElementById(id);
 
-  const allin = buy + fees;
-  const each = sell - allin;
-  const total = each * qty;
+  function num(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function money(n){
+    return n.toLocaleString(undefined,{style:"currency",currency:"USD"});
+  }
 
-  document.getElementById("allin").innerText = "$" + allin.toFixed(2);
-  document.getElementById("each").innerText = "$" + each.toFixed(2);
-  document.getElementById("total").innerText = "$" + total.toFixed(2);
-}
+  function platformPreset(){
+    const p = $("platform").value;
+    if(p === "inperson"){
+      return { pct: 0, fixed: 0 };
+    }
+    if(p === "ebay"){
+      return { pct: 13.25, fixed: 0.30 };
+    }
+    if(p === "mercari"){
+      return { pct: 0, fixed: 0 };
+    }
+    // custom:
+    return { pct: num($("feePct").value), fixed: num($("feeFixed").value) };
+  }
 
-calc();
+  function recalc(){
+    const qty = Math.max(0, Math.floor(num($("qty").value)));
+    const buy = Math.max(0, num($("buy").value));
+    const sell = Math.max(0, num($("sell").value));
+    const ship = Math.max(0, num($("ship").value));
+    const other = Math.max(0, num($("other").value));
+
+    const preset = platformPreset();
+    const feeEach = (sell * (preset.pct/100)) + preset.fixed;
+
+    const allInEach = buy + ship + other + feeEach;
+    const profitEach = sell - allInEach;
+
+    const totalRev = qty * sell;
+    const totalCost = qty * allInEach;
+    const totalProfit = qty * profitEach;
+
+    const margin = sell > 0 ? (profitEach / sell) * 100 : 0;
+
+    // Breakeven (solve for sell where sell - (buy+ship+other + sell*pct + fixed)=0)
+    // sell*(1 - pct) = buy+ship+other+fixed
+    const pct = preset.pct/100;
+    const denom = (1 - pct);
+    const breakevenEach = denom > 0 ? (buy + ship + other + preset.fixed) / denom : 0;
+
+    $("feeEach").textContent = money(feeEach);
+    $("allInEach").textContent = money(allInEach);
+    $("profitEach").textContent = money(profitEach);
+    $("totalRev").textContent = money(totalRev);
+    $("totalCost").textContent = money(totalCost);
+    $("totalProfit").textContent = money(totalProfit);
+    $("margin").textContent = (margin).toFixed(2) + "%";
+    $("breakevenEach").textContent = money(breakevenEach);
+
+    // status
+    const dot = $("statusDot");
+    const txt = $("statusText");
+    dot.classList.remove("good","bad","warn");
+    if(qty === 0 || (buy===0 && sell===0)){
+      dot.classList.add("warn"); txt.textContent = "Enter numbers";
+    } else if(profitEach > 0){
+      dot.classList.add("good"); txt.textContent = "Profitable ✅";
+    } else if(profitEach === 0){
+      dot.classList.add("warn"); txt.textContent = "Break-even ⚠️";
+    } else {
+      dot.classList.add("bad"); txt.textContent = "Loss ❌";
+    }
+  }
+
+  function resetAll(){
+    $("qty").value = 1;
+    $("platform").value = "inperson";
+    $("buy").value = 0;
+    $("sell").value = 0;
+    $("ship").value = 0;
+    $("feePct").value = 0;
+    $("feeFixed").value = 0;
+    $("other").value = 0;
+    recalc();
+  }
+
+  function quickSet(q){
+    $("qty").value = q;
+    recalc();
+  }
+
+  function quickInPerson(){
+    $("platform").value = "inperson";
+    recalc();
+  }
+
+  async function copySummary(){
+    const lines = [
+      "Vault Profit Engine — Summary",
+      "Qty: " + $("qty").value,
+      "Buy (each): " + $("buy").value,
+      "Sell (each): " + $("sell").value,
+      "Platform: " + $("platform").value,
+      "All-in (each): " + $("allInEach").textContent,
+      "Profit (each): " + $("profitEach").textContent,
+      "Total Profit: " + $("totalProfit").textContent,
+      "Margin: " + $("margin").textContent
+    ].join("\n");
+    try{
+      await navigator.clipboard.writeText(lines);
+      $("noteBox").innerHTML = "<b>Copied ✅</b><br/>Paste it into your notes or your deal log.";
+    }catch(e){
+      $("noteBox").innerHTML = "<b>Copy blocked</b><br/>Your browser may block clipboard. You can still screenshot results.";
+    }
+  }
+
+  // Auto-update on input
+  ["qty","platform","buy","sell","ship","feePct","feeFixed","other"].forEach(id=>{
+    $(id).addEventListener("input", recalc);
+    $(id).addEventListener("change", recalc);
+  });
+
+  // First render
+  recalc();
 </script>
-
 </body>
 </html>
