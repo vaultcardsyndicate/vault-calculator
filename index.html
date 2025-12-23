@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vault Profit Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0f1a;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      max-width: 420px;
+      margin: auto;
+      background: #12182b;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    p {
+      text-align: center;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 15px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+    }
+    .profit {
+      font-weight: bold;
+      font-size: 17px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>The Vault</h1>
+  <p>Plug & Play Profit Calculator</p>
+
+  <label>Quantity</label>
+  <input id="qty" type="number" value="1" oninput="calc()" />
+
+  <label>Buy Price (per item)</label>
+  <input id="buy" type="number" value="0" oninput="calc()" />
+
+  <label>Fees / Shipping (per item)</label>
+  <input id="fees" type="number" value="0" oninput="calc()" />
+
+  <label>Sell Price (per item)</label>
+  <input id="sell" type="number" value="0" oninput="calc()" />
+
+  <div class="result">
+    <div class="row"><span>All-in Cost (each)</span><span id="allin">$0</span></div>
+    <div class="row"><span>Profit (each)</span><span id="each">$0</span></div>
+    <div class="row"><span>Total Profit</span><span id="total" class="profit">$0</span></div>
+  </div>
+</div>
+
+<script>
+function calc() {
+  const qty = Number(document.getElementById("qty").value) || 0;
+  const buy = Number(document.getElementById("buy").value) || 0;
+  const fees = Number(document.getElementById("fees").value) || 0;
+  const sell = Number(document.getElementById("sell").value) || 0;
+
+  const allin = buy + fees;
+  const each = sell - allin;
+  const total = each * qty;
+
+  document.getElementById("allin").innerText = "$" + allin.toFixed(2);
+  document.getElementById("each").innerText = "$" + each.toFixed(2);
+  document.getElementById("total").innerText = "$" + total.toFixed(2);
+}
+
+calc();
+</script>
+
+</body>
+</html>
